@@ -76,4 +76,12 @@ def summarize_todos(session: Session=Depends(get_session)):
     if not todos:
         return {"summary": "No todos available."}
     
+
+    todo_list_text = "\n".join([f"- {t.title} (prioritas: {t.priority}, selesai: {t.is_done})" for t in todos])
+    prompt = f"Ringkas daftar todo berikkut dalam 2-kalimat, dalam bahasa indonesia:\n{todo_list_text}"
+    
+    summary = ask_gemini(prompt)
+
+    return {"summary":summary}
+    
     
