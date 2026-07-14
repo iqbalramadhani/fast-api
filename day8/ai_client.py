@@ -19,7 +19,7 @@ def ask_gemini(
     try:
         response = gemini_client.models.generate_content(
             model="gemini-flash-lite-latest",
-            content=prompt,
+            contents=prompt,
             config=types.GenerateContentConfig(
                 system_instruction=system_instruction,
                 temperature=temperature,
