@@ -39,16 +39,45 @@ def update_todo_status_tool(todo_id: int, is_done: bool) -> str:
         status = "selesai" if is_done else "belum selesai"
         return f"Todo {todo.title} ditandai sebagai {status}"
     
+# def list_all_todos_tool() -> str:
+#     """Menampilkan semua todo (baik yang sudah maupun belum selesai),
+#     lebgkap dengan ID-nya. Gunakan ini ketika user inging melihat daftar tugas lengkap
+#     mereka, atau butuh tahu ID todo tertentu."""
+#     with Session(engine) as session:
+#         todos = session.exec(select(Todo)).all()
+#         if not todos:
+#             return "Belum ada todo sama sekali"
+#         result = "\n".join(
+#             [f"- ID {t.id}: {t.title} (prioritas: {t.priority}, selesai: {t.is_done})" for t in todos]
+#         )
+
+#         return result
+
+def update_todo_status_tool(todo_id: int, is_done: bool) -> str:
+    """Mengubah status selesai/belum selesai dari sebuah todo berdasarkan ID.
+    Gunakan ini ketika user bilang sudah menyesaikan tugas tertentu,
+    atau ingin menandai ulang tugas sebagai belum selesai."""
+    with Session(engine) as session:
+        todo = session.get(Todo, todo_id)
+        if not todo:
+            return f"Todo dengan id {todo_id} tidak ditemukan"
+        todo.is_done = is_done
+        session.add(todo)
+        session.commit()
+        status = "selesai" if is_done else "belum selesai"
+        return f"Todo {todo.title} ditandai sebagai {status}"
+
+
 def list_all_todos_tool() -> str:
-    """Menampilkan semua todo (baik yang sudah maupun belum selesai),
-    lebgkap dengan ID-nya. Gunakan ini ketika user inging melihat daftar tugas lengkap
-    mereka, atau butuh tahu ID todo tertentu."""
+    """Menampilkan SEMUA todo (baik yang sudah maupun belum selesai) lengkap dengan ID-nya. Gunakan ini ketika user
+    ingin melihat daftar lengkap tugas mereka, atau butuh tahu ID todo tertentu."""
     with Session(engine) as session:
         todos = session.exec(select(Todo)).all()
         if not todos:
             return "Belum ada todo sama sekali"
+        
         result = "\n".join(
-            [f"- ID {t.id}: {t.title} (prioritas: {t.priority}, selesai: {t.is_done})" for t in todos]
+            [f"- ID {t.id}: {t.title} (prioritas: {t.priority}, selesai: {t.is_done})"for t in todos]
         )
 
         return result

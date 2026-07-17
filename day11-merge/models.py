@@ -31,3 +31,13 @@ class AskRequest(SQLModel):
 class AskResponse(SQLModel):
     question: str
     answer: str
+
+class ChatRequest(SQLModel):
+    session_id: str = SQLField(min_length=1)
+    message: str = SQLField(min_length=1, max_length=1000)
+
+
+class ChatResponse(SQLModel):
+    session_id: str
+    message: str
+    reply: str

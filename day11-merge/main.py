@@ -2,10 +2,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import JSONResponse, StreamingResponse
 from sqlmodel import Session, select
-from models import Todo, TodoCreate, TodoRead, TodoUpdate, AskRequest, AskResponse
+from models import Todo, TodoCreate, TodoRead, TodoUpdate, AskRequest, AskResponse, ChatRequest, ChatResponse
 from database import create_db_and_tables, get_session
 from crud import get_todo_or_404
-from ai_client import ask_gemini, ask_gemini_stream, ask_gemini_with_tools
+from ai_client import ask_gemini, ask_gemini_stream, ask_gemini_with_tools, chat_with_assistant
 
 # --- Lifespan (pengganti on_event) ---
 @asynccontextmanager
@@ -97,3 +97,13 @@ def chat_with_tools(request: AskRequest):
     answer = ask_gemini_with_tools(request.question)
     return AskResponse(question=request.question, answer=answer)
     
+
+
+@app.post("/new-chat", response_model=ChatResponse)
+def chat_enpoint(request:ChatRequest):
+    reply = chat_with_assistant(request.session_id, request.message)
+    return ChatResponse(
+        session_id=request.session_id,
+        message=request.message,
+        reply=reply
+    )
